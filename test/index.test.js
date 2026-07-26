@@ -18,13 +18,15 @@ describe('DOM behavior helpers', () => {
     domLogic = require('../index')
   })
 
-  test('addElementToDOM updates the target container', () => {
+  test('addElementToDOM updates the target container with the supplied content', () => {
+    const container = document.getElementById('dynamic-content')
+
     domLogic.addElementToDOM('dynamic-content', '<p>Added</p>')
 
-    expect(document.getElementById('dynamic-content').innerHTML).toContain('<p>Added</p>')
+    expect(container.innerHTML).toBe('<p>Added</p>')
   })
 
-  test('removeElementFromDOM removes the target element', () => {
+  test('removeElementFromDOM removes the target element from the DOM', () => {
     const removable = document.createElement('div')
     removable.id = 'remove-me'
     document.body.appendChild(removable)
@@ -34,33 +36,38 @@ describe('DOM behavior helpers', () => {
     expect(document.getElementById('remove-me')).toBeNull()
   })
 
-  test('simulateClick updates the DOM correctly', () => {
+  test('simulateClick updates the DOM content to reflect the click action', () => {
+    const container = document.getElementById('dynamic-content')
+
     domLogic.simulateClick('dynamic-content', 'Button Clicked!')
 
-    expect(document.getElementById('dynamic-content').textContent).toBe('Button Clicked!')
+    expect(container.textContent).toBe('Button Clicked!')
   })
 
-  test('handleFormSubmit updates the DOM with valid input', () => {
+  test('handleFormSubmit updates the DOM with valid input and clears the error state', () => {
     const form = document.getElementById('user-form')
     const input = form.querySelector('input')
+    const container = document.getElementById('dynamic-content')
     const errorMessage = document.getElementById('error-message')
 
     input.value = 'Hello from the form'
     domLogic.handleFormSubmit('user-form', 'dynamic-content')
 
-    expect(document.getElementById('dynamic-content').textContent).toBe('Hello from the form')
+    expect(container.textContent).toBe('Hello from the form')
     expect(errorMessage.textContent).toBe('')
     expect(errorMessage.classList.contains('hidden')).toBe(true)
   })
 
-  test('handleFormSubmit shows an error for empty input', () => {
+  test('handleFormSubmit shows an error message and keeps the error state visible for empty input', () => {
     const form = document.getElementById('user-form')
     const input = form.querySelector('input')
+    const container = document.getElementById('dynamic-content')
     const errorMessage = document.getElementById('error-message')
 
     input.value = '   '
     domLogic.handleFormSubmit('user-form', 'dynamic-content')
 
+    expect(container.textContent).toBe('')
     expect(errorMessage.textContent).toBe('Input cannot be empty')
     expect(errorMessage.classList.contains('hidden')).toBe(false)
   })
